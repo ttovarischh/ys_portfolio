@@ -28,7 +28,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const iEngine = Engine.create();
   const iRunner = Runner.create();
   const iRender = Render.create({
-    element: document.body,
+    // element: document.body,
+    element: document.getElementById("myCanvasContainer"),
     engine: iEngine,
     options: {
       width: window.innerWidth,
