@@ -128,21 +128,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Device orientation interaction for mobile
   function setupMobileInteractions() {
-    window.addEventListener('deviceorientation', (event) => {
-      if (event.gamma !== null && event.beta !== null) {
-        const tiltX = event.gamma; // Left/right tilt
-        const tiltY = event.beta;  // Front/back tilt
+    console.log("Updated");
+    window.addEventListener('devicemotion', (event) => {
+      const acceleration = event.accelerationIncludingGravity;
+      if (acceleration) {
+        const accelX = acceleration.x; // Acceleration in the X direction
+        const accelY = acceleration.y; // Acceleration in the Y direction
 
-        // Map tilt values to a range that affects the position
-        const scale = 2; // Adjust this scale as needed
+        console.log(`AccelX: ${accelX}, AccelY: ${accelY}`); // Debugging
+
+        // Map acceleration values to a range that affects the position
+        const scale = 10; // Adjust this scale as needed
+
+        // Optional: Limit the range of acceleration values
+        const xOffset = Math.max(-100, Math.min(100, accelX * scale));
+        const yOffset = Math.max(-100, Math.min(100, accelY * scale));
+
         engine.world.bodies.forEach((body) => {
           if (body.label !== "Ground" && body.label !== "LeftWall" && body.label !== "RightWall") {
             Matter.Body.setPosition(body, {
-              x: window.innerWidth / 2 + tiltX * scale,
-              y: window.innerHeight / 2 - tiltY * scale
+              x: window.innerWidth / 2 + xOffset,
+              y: window.innerHeight / 2 - yOffset
             });
           }
         });
+      } else {
+        console.log("No acceleration data available"); // Debugging
       }
     });
   }
